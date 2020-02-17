@@ -2,23 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const app = express();
+const handlebars = require('express-handlebars')
 
-
+app.engine('handlebars', handlebars({defaultLayout: 'main'}))
+app.set('view engine', 'handlebars')
 
 // parse application/json
 app.use(bodyParser.json());
-
-const Sequelize = require('sequelize')
-const sequelize = new Sequelize('nodeteste', 'nownxlol', 'pkfull99', {
-    "host": "mysql669.umbler.com",
-    "dialect": "mysql"
-})
-
-sequelize.authenticate().then(() =>{
-    console.log("Sucesso")    
-}).catch((erro) =>{
-    console.log(erro)
-})
 
 //create database connection
 const conn = mysql.createConnection({
@@ -34,39 +24,19 @@ conn.connect((err) =>{
   console.log('Mysql Connected...');
 });
 
-const Produto = sequelize.define('produto', {
-    nome:{
-        type: Sequelize.STRING,
-        allowNull: false
-    },
-    descricao:{
-        type: Sequelize.TEXT,
-        allowNull: false
-    },
-    valor:{
-        type: Sequelize.DOUBLE,
-        allowNull: false
-    }
-})
-
-Produto.sync({force: true})
-
 app.get('/', (req, res) =>{
-    res.render(__dirname + "/html/index.html")
-});
-app.get('/produtos/add', (req, res) =>{
-    res.send("rota de cadastro");
+    res.render(<h1>Olá</h1>)
 });
 
 app.post('/api/clientes/login', (req, res) =>{
     let data = {
-      email: req.body.email,
-      senha: req.body.senha
+      email: conn.escape(req.body.email),
+      senha: conn.escape(req.body.senha)
   };
   console.log(data);
   
-  let sql = "select * from cliente where email='"+req.body.email+"' and senha='"+req.body.senha+"'";
-  let query = conn.query(sql, data,(err, results) => {
+  let sql = "select * from cliente where email='"+conn.escape(req.body.email)+"' and senha='"+conn.escape(req.body.senha)+"'";
+  let query = conn.query(sql, data,(err, results)=> {
     if(err) throw err;
     res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
   });
@@ -83,7 +53,7 @@ app.get('/api/clientes',(req, res) => {
 
 //show single cliente
 app.get('/api/clientes/:id',(req, res) => {
-  let sql = "SELECT * FROM cliente WHERE id="+req.params.id;
+  let sql = "SELECT * FROM cliente WHERE id="+conn.escape(req.params.id);
   let query = conn.query(sql, (err, results) => {
     if(err) throw err;
     res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
@@ -93,11 +63,11 @@ app.get('/api/clientes/:id',(req, res) => {
 //add new product
 app.post('/api/clientes',(req, res) => {
   let data = {
-      nome: req.body.nome, 
-      cpf: req.body.cpf,
-      telefone: req.body.telefone,
-      email: req.body.email,
-      senha: req.body.senha
+      nome: conn.escape(req.body.nome), 
+      cpf: conn.escape(req.body.cpf),
+      telefone: conn.escape(req.body.telefone),
+      email: conn.escape(req.body.email),
+      senha: conn.escape(req.body.senha)
   };
   
   let sql = "INSERT INTO cliente SET ?";
@@ -109,7 +79,7 @@ app.post('/api/clientes',(req, res) => {
 
 //update cliente
 app.put('/api/clientes/:id',(req, res) => {
-  let sql = "UPDATE cliente SET nome='"+req.body.nome+"', cpf='"+req.body.cpf+"', telefone='"+req.body.telefone+"', email='"+req.body.email+"', senha='"+req.body.senha+"' WHERE id="+req.params.id;
+  let sql = "UPDATE cliente SET nome='"+conn.escape(req.body.nome)+"', cpf='"+conn.escape(req.body.cpf)+"', telefone='"+conn.escape(req.body.telefone)+"', email='"+conn(req.body.email)+"', senha='"+conn.escape(req.body.senha)+"' WHERE id="+conn.escape(req.params.id);
   let query = conn.query(sql, (err, results) => {
     if(err) throw err;
     res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
@@ -118,7 +88,7 @@ app.put('/api/clientes/:id',(req, res) => {
 
 //Delete cliente
 app.delete('/api/clientes/:id',(req, res) => {
-  let sql = "DELETE FROM cliente WHERE id="+req.params.id+"";
+  let sql = "DELETE FROM cliente WHERE id="+conn.escape(req.params.id)+"";
   let query = conn.query(sql, (err, results) => {
     if(err) throw err;
       res.send(JSON.stringify({"status": 200, "error": null, "response": results}));
