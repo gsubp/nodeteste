@@ -4,8 +4,21 @@ const mysql = require('mysql');
 const app = express();
 
 
+
 // parse application/json
 app.use(bodyParser.json());
+
+const Sequelize = require('sequelize')
+const sequelize = new Sequelize('nodeteste', 'nownxlol', 'pkfull99', {
+    "host": "mysql669.umbler.com",
+    "dialect": "mysql"
+})
+
+sequelize.authenticate().then(() =>{
+    console.log("Sucesso")    
+}).catch((erro) =>{
+    console.log(erro)
+})
 
 //create database connection
 const conn = mysql.createConnection({
@@ -21,6 +34,9 @@ conn.connect((err) =>{
   console.log('Mysql Connected...');
 });
 
+app.get('/', (req, res) =>{
+    res.render(__dirname + "/html/index.html")
+});
 app.get('/produtos/add', (req, res) =>{
     res.send("rota de cadastro");
 });
