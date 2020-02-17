@@ -35,11 +35,6 @@ conn.connect((err) =>{
 });
 
 const Produto = sequelize.define('produto', {
-    id:{
-        type: Sequelize.INTEGER,
-        autoIncrement: true,
-        primaryKey: true
-    },
     nome:{
         type: Sequelize.STRING,
         allowNull: false
