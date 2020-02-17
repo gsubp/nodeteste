@@ -34,7 +34,7 @@ conn.connect((err) =>{
   console.log('Mysql Connected...');
 });
 
-const Produto = sequelize.define('postagem', {
+const Produto = sequelize.define('produto', {
     id:{
         type: Sequelize.INTEGER,
         autoIncrement: true,
