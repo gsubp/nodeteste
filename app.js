@@ -34,6 +34,28 @@ conn.connect((err) =>{
   console.log('Mysql Connected...');
 });
 
+const Produto = sequelize.define('postagem', {
+    id:{
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+    },
+    nome:{
+        type: Sequelize.STRING,
+        allowNull: false
+    },
+    descricao:{
+        type: Sequelize.TEXT,
+        allowNull: false
+    },
+    valor:{
+        type: Sequelize.DOUBLE,
+        allowNull: false
+    }
+})
+
+Produto.sync({force: true})
+
 app.get('/', (req, res) =>{
     res.render(__dirname + "/html/index.html")
 });
