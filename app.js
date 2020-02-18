@@ -24,9 +24,6 @@ conn.connect((err) =>{
   console.log('Mysql Connected...');
 });
 
-app.get('/', (req, res) =>{
-    res.render(<h1>Olá</h1>)
-});
 
 app.post('/api/clientes/login', (req, res) =>{
     let data = {
